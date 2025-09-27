@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时尚今日必做转盘</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        header {
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: #666;
+            font-weight: 400;
+        }
+        
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 30px;
+        }
+        
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border: 6px solid white;
+        }
+        
+        .option {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: bottom right;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .option:hover {
+            transform: scale(1.05);
+        }
+        
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 40px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            z-index: 10;
+            border-radius: 3px 3px 0 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .pointer::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 15px;
+            background-color: white;
+            border-radius: 50%;
+        }
+        
+        .center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            z-index: 5;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #764ba2;
+            font-size: 0.8rem;
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+        }
+        
+        .spin-btn {
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+            letter-spacing: 1px;
+        }
+        
+        .spin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 126, 95, 0.6);
+        }
+        
+        .spin-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 3px 10px rgba(255, 126, 95, 0.4);
+        }
+        
+        .spin-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+        }
+        
+        .result {
+            font-size: 1.4rem;
+            margin-top: 20px;
+            min-height: 50px;
+            padding: 15px;
+            border-radius: 15px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+        }
+        
+        .result.highlight {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+        
+        .history {
+            margin-top: 20px;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .history h3 {
+            margin-bottom: 10px;
+            color: #764ba2;
+            font-size: 1rem;
+        }
+        
+        .history-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-time {
+            color: #666;
+            font-size: 0.8rem;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        footer {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 500px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .wheel-container {
+                width: 250px;
+                height: 250px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .option {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>今日必做转盘</h1>
+            <p class="subtitle">旋转选择今天的活动</p>
+        </header>
+        
+        <div class="wheel-container">
+            <div class="pointer"></div>
+            <div class="wheel" id="wheel">
+                <!-- 选项将通过JavaScript动态生成 -->
+            </div>
+            <div class="center-circle">SPIN</div>
+        </div>
+        
+        <div class="controls">
+            <button class="spin-btn" id="spin-btn">开始旋转</button>
+            <div class="result" id="result">等待旋转结果...</div>
+        </div>
+        
+        <div class="history">
+            <h3>历史记录</h3>
+            <div id="history-list"></div>
+        </div>
+        
+        <footer>
+            <p>时尚设计 · 每日活动选择器</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const wheel = document.getElementById('wheel');
+            const spinBtn = document.getElementById('spin-btn');
+            const result = document.getElementById('result');
+            const historyList = document.getElementById('history-list');
+            
+            // 转盘选项
+            const options = [
+                '王者荣耀', '金铲铲', '飞机棋', 'UNO', 
+                '炸弹猫', '生气猫', '跑步', '睡觉'
+            ];
+            
+            // 时尚渐变色方案
+            const colors = [
+                'linear-gradient(135deg, #ff7e5f, #feb47b)',
+                'linear-gradient(135deg, #667eea, #764ba2)',
+                'linear-gradient(135deg, #f093fb, #f5576c)',
+                'linear-gradient(135deg, #4facfe, #00f2fe)',
+                'linear-gradient(135deg, #43e97b, #38f9d7)',
+                'linear-gradient(135deg, #fa709a, #fee140)',
+                'linear-gradient(135deg, #a8edea, #fed6e3)',
+                'linear-gradient(135deg, #d299c2, #fef9d7)'
+            ];
+            
+            // 历史记录
+            let history = [];
+            
+            // 生成转盘选项
+            function createWheel() {
+                const angle = 360 / options.length;
+                
+                options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'option';
+                    optionElement.textContent = option;
+                    optionElement.style.transform = `rotate(${index * angle}deg)`;
+                    optionElement.style.background = colors[index];
+                    
+                    // 添加分割线
+                    optionElement.style.borderRight = '2px solid rgba(255, 255, 255, 0.5)';
+                    
+                    wheel.appendChild(optionElement);
+                    
+                    // 添加文字方向调整
+                    const text = document.createElement('div');
+                    text.textContent = option;
+                    text.style.transform = `rotate(${angle/2}deg)`;
+                    text.style.width = '100%';
+                    text.style.paddingTop = '40px';
+                    optionElement.innerHTML = '';
+                    optionElement.appendChild(text);
+                });
+            }
+            
+            // 旋转转盘
+            function spinWheel() {
+                // 禁用按钮防止重复点击
+                spinBtn.disabled = true;
+                result.textContent = '旋转中...';
+                result.classList.remove('highlight');
+                
+                // 随机旋转角度（确保旋转多圈后停在某个选项上）
+                const spins = 5; // 旋转圈数
+                const randomOption = Math.floor(Math.random() * options.length);
+                const anglePerOption = 360 / options.length;
+                const extraAngle = 5; // 额外角度使指针指向选项中心
+                const targetAngle = 360 * spins + (360 - (randomOption * anglePerOption)) - anglePerOption/2 + extraAngle;
+                
+                // 设置旋转
+                wheel.style.transform = `rotate(${targetAngle}deg)`;
+                
+                // 旋转结束后显示结果
+                setTimeout(() => {
+                    const selectedOption = options[randomOption];
+                    result.textContent = `今日必做：${selectedOption}`;
+                    result.classList.add('highlight');
+                    spinBtn.disabled = false;
+                    
+                    // 添加到历史记录
+                    addToHistory(selectedOption);
+                }, 4000);
+            }
+            
+            // 添加到历史记录
+            function addToHistory(option) {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('zh-CN', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                history.unshift({ option, time: timeString });
+                
+                // 只保留最近5条记录
+                if (history.length > 5) {
+                    history.pop();
+                }
+                
+                updateHistoryDisplay();
+            }
+            
+            // 更新历史记录显示
+            function updateHistoryDisplay() {
+                historyList.innerHTML = '';
+                
+                history.forEach(item => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    historyItem.innerHTML = `
+                        <span>${item.option}</span>
+                        <span class="history-time">${item.time}</span>
+                    `;
+                    historyList.appendChild(historyItem);
+                });
+            }
+            
+            // 初始化转盘
+            createWheel();
+            
+            // 绑定旋转按钮事件
+            spinBtn.addEventListener('click', spinWheel);
+            
+            // 添加一些示例历史记录
+            addToHistory('睡觉');
+            addToHistory('跑步');
+        });
+    </script>
+</body>
+</html>
